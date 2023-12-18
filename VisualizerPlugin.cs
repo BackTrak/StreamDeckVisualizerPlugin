@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
@@ -27,6 +28,7 @@ namespace Visualizer
     {
         private VisualizerMode _visualizerMode = VisualizerMode.GreenBars;
         private KnownColor _customColor = KnownColor.AliceBlue;
+        private KnownColor _gradientColor = KnownColor.Coral;
         private string _targetDeviceID = String.Empty;
 
         private bool _wasEnabledOnLastTick = false;
@@ -53,6 +55,9 @@ namespace Visualizer
 
             if (Enum.TryParse<KnownColor>(settings.Value<String>("custom_color"), out _customColor) == false)
                 _customColor = KnownColor.AliceBlue;
+
+            if (Enum.TryParse<KnownColor>(settings.Value<String>("gradient_color"), out _gradientColor) == false)
+                _gradientColor = KnownColor.Coral;
 
             if (_targetDeviceID != settings.Value<String>("visualizer_device"))
             {
@@ -276,19 +281,28 @@ namespace Visualizer
                 Brush red = new SolidBrush(Color.FromKnownColor(KnownColor.Red));
                 Brush black = new SolidBrush(Color.FromKnownColor(KnownColor.Black));
                 Brush custom = new SolidBrush(Color.FromKnownColor(_customColor));
+                Brush gradient = new LinearGradientBrush(new RectangleF(0, 0, bitmap.Width, bitmap.Height), Color.FromKnownColor(_customColor), Color.FromKnownColor(_gradientColor), 90);
 
-                if (_visualizerMode == VisualizerMode.GreenBars)
+                switch (_visualizerMode)
                 {
-                    graphics.FillRectangle(red, new RectangleF(0, 0, bitmap.Width, bitmap.Height));
-                    graphics.FillRectangle(yellow, new RectangleF(0, bitmap.Height - bitmap.Height * .9f, bitmap.Width, bitmap.Height));
-                    graphics.FillRectangle(green, new RectangleF(0, bitmap.Height - bitmap.Height * .7f, bitmap.Width, bitmap.Height));
+                    case VisualizerMode.GreenBars:
+                        graphics.FillRectangle(red, new RectangleF(0, 0, bitmap.Width, bitmap.Height));
+                        graphics.FillRectangle(yellow, new RectangleF(0, bitmap.Height - bitmap.Height * .9f, bitmap.Width, bitmap.Height));
+                        graphics.FillRectangle(green, new RectangleF(0, bitmap.Height - bitmap.Height * .7f, bitmap.Width, bitmap.Height));
+                        break;
+
+                    case VisualizerMode.CustomColor:
+                        graphics.FillRectangle(custom, new RectangleF(0, 0, bitmap.Width, bitmap.Height));
+                        break;
+
+                    case VisualizerMode.Gradient:
+                        graphics.FillRectangle(gradient, new RectangleF(0, 0, bitmap.Width, bitmap.Height));
+                        break;
+
+                    default:
+                        throw new NotSupportedException(_visualizerMode.ToString());
                 }
-                else
-                {
-                    graphics.FillRectangle(custom, new RectangleF(0, 0, bitmap.Width, bitmap.Height));
-                    //graphics.FillRectangle(white, new RectangleF(0, bitmap.Height - bitmap.Height * .9f, bitmap.Width, bitmap.Height));
-                    //graphics.FillRectangle(white, new RectangleF(0, bitmap.Height - bitmap.Height * .7f, bitmap.Width, bitmap.Height));
-                }
+                
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -305,11 +319,23 @@ namespace Visualizer
                     //float height = (float)(peakFreqs[i] / FftValues[peakIndex] * bitmap.Height);
                     float height = (float)(peaks[i] / max[i] * bitmap.Height);
                     float width = bitmap.Width / peaks.Length;
+                    float radius = (width) / 2;
+                    float midpoint = radius;
 
-                    graphics.FillRectangle(black, new RectangleF(i * width, 0, width, bitmap.Height - height + bitmap.Height / 8 / 2));
 
-                    if (_visualizerMode == VisualizerMode.CustomColor)
-                        graphics.FillEllipse(custom, new RectangleF(i * bitmap.Width / 8, bitmap.Height - height, bitmap.Width / 8, bitmap.Height / 8));
+                    for (int j = 1; j < width; j++)
+                    {
+                        float x = j - midpoint;
+                        var angle = Math.Acos(x / radius);
+                        var curveHeight = (float) Math.Sin(angle) * radius;
+
+                        graphics.DrawLine(new Pen(black), (i * bitmap.Width / 8) + j, 0, (i * bitmap.Width / 8) + j, bitmap.Height - height - curveHeight + bitmap.Height / 8 / 2);
+                    }
+
+                    //graphics.FillRectangle(black, new RectangleF(i * width, 0, width, bitmap.Height - height + bitmap.Height / 8 / 2));
+
+                    //if (_visualizerMode == VisualizerMode.CustomColor)
+                    //    graphics.FillEllipse(custom, new RectangleF(i * bitmap.Width / 8, bitmap.Height - height, bitmap.Width / 8, bitmap.Height / 8));
 
                     //if (_visualizerMode == VisualizerMode.NegativeBalls)
                     //    graphics.FillEllipse(red, new RectangleF(i * bitmap.Width / 8, height, bitmap.Width / 8, bitmap.Height / 8));

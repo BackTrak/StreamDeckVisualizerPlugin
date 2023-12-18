@@ -1,1 +1,1 @@
-# StreamDeckNvidiaBroadcastPlugin
+# Stream Deck Visualizer

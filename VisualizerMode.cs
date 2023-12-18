@@ -9,6 +9,7 @@ namespace Visualizer
     internal enum VisualizerMode
     {
         GreenBars,
-        CustomColor
+        CustomColor,
+        Gradient
     }
 }
