@@ -1,0 +1,38 @@
+﻿{
+    "Actions": [
+        {
+            "Icon": "Images/zhgold72",
+            "Name": "Visualizer",
+            "States": [
+                {
+                    "Image": "Images/zhgold72",
+                    "TitleAlignment": "bottom",
+                    "FontSize": "7"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Fun with audio",
+            "UUID": "com.zaphop.visualizer.visualizer"
+        }
+    ],
+    "SDKVersion": 2,
+    "Author": "Nick Pirocanac",
+    "CodePath": "com.zaphop.visualizer.exe",
+    "Description": "Visualizer",
+    "Name": "Visualizer",
+    "Category": "Visualizer",
+    "CategoryIcon": "Images/zhgold72",
+    "Icon": "Images/zhgold72",
+    "URL": "https://www.zaphop.com",
+    "Version": "1.0",
+    "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html",
+    "OS": [
+        {
+            "Platform": "windows",
+            "MinimumVersion": "10"
+        }
+    ],
+    "Software": {
+        "MinimumVersion": "4.1"
+    }
+}
