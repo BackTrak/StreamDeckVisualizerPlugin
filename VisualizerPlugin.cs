@@ -33,14 +33,7 @@ namespace Visualizer
 
         private bool _wasEnabledOnLastTick = false;
 
-        //https://stackoverflow.com/questions/18813112/naudio-fft-result-gives-intensity-on-all-frequencies-c-sharp/20414331#20414331
-
-        // Other inputs are also usable. Just look through the NAudio library.
-        //private IWaveIn waveIn;
-        //private static int fftLength = 8192; // NAudio fft wants powers of two!
-        //private static int fftLength = 512; // NAudio fft wants powers of two!
-        // There might be a sample aggregator in NAudio somewhere but I made a variation for my needs
-        //private SampleAggregator sampleAggregator = new SampleAggregator(fftLength);
+        // https://stackoverflow.com/questions/18813112/naudio-fft-result-gives-intensity-on-all-frequencies-c-sharp/20414331#20414331
 
         private WasapiCapture _audioDevice = null;
         private double[] _audioValues;
@@ -83,34 +76,21 @@ namespace Visualizer
                     while (_visualizerActive == true)
                     {
                         RenderData();
-                        Thread.Sleep(15);
+                        Thread.Sleep(20);
                     }
                 }
             });
 
             connection.OnSendToPlugin += Connection_OnSendToPlugin;
 
-            //sampleAggregator.FftCalculated += new EventHandler<FftEventArgs>(FftCalculated);
-            //sampleAggregator.PerformFFT = true;
-
             CaptureTargetAudioDevice();
             SendCurrentAudioDevices(connection);
-
-            //connection.SendToPropertyInspectorAsync(JObject.Parse($"{{'currentTime': '{DateTime.Now.ToString()}'}}"));
         }
 
         private void Connection_OnSendToPlugin(object sender, SDEventReceivedEventArgs<SendToPlugin> e)
         {
             if(e.Event.Payload.TryGetValue("property_inspector", out var value) == true && value.Value<String>() == "propertyInspectorConnected")
                 SendCurrentAudioDevices((SDConnection)sender);
-
-            //            +e.Event.Payload {
-            //                {
-            //                    "property_inspector": "propertyInspectorConnected"
-            //}
-            //            }
-            //            Newtonsoft.Json.Linq.JObject
-
         }
 
         private void SendCurrentAudioDevices(SDConnection connection)
@@ -121,22 +101,9 @@ namespace Visualizer
                 .EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active | DeviceState.Unplugged)
                 .Select(p => new { Name = p.FriendlyName, ID = p.ID });
 
-            var deviceList = new { DeviceList = devices }; 
+            var deviceList = new { DeviceList = devices, SelectedDevice = _targetDeviceID }; 
 
-            //NameValueCollection devices = new NameValueCollection();
-
-            
-
-            //foreach (var device in _deviceEnum.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active | DeviceState.Unplugged))
-            //    devices.Add(device.FriendlyName, device.ID);
-
-            var json = JsonConvert.SerializeObject(deviceList);
-
-            
-
-            var jobjectDevices = JObject.Parse(json);
-
-            //var jobjectDevices = JObject.FromObject(devices);
+            var jobjectDevices = JObject.FromObject(deviceList);
 
             connection.SendToPropertyInspectorAsync(jobjectDevices);
         }
@@ -146,9 +113,6 @@ namespace Visualizer
             if (_audioDevice != null)
                 _audioDevice.StopRecording();
 
-            // Here you decide what you want to use as the waveIn.
-            // There are many options in NAudio and you can use other streams/files.
-            // Note that the code varies for each different source.
             if (String.IsNullOrWhiteSpace(_targetDeviceID) == true)
             {
                 _audioDevice = new WasapiLoopbackCapture();
@@ -169,11 +133,6 @@ namespace Visualizer
                     // If the target device could not be loaded, then just grab the default output device.
                     _audioDevice = new WasapiLoopbackCapture();
                 }
-
-                //if (targetDevice != null)
-                //    _audioDevice = new WasapiLoopbackCapture(targetDevice);
-                //else
-                
             }
 
             WaveFormat fmt = _audioDevice.WaveFormat;
@@ -219,7 +178,6 @@ namespace Visualizer
         {
             try
             {
-
                 double[] paddedAudio = FftSharp.Pad.ZeroPad(_audioValues);
                 double[] fftMag = FftSharp.Transform.FFTmagnitude(paddedAudio);
                 Array.Copy(fftMag, _fftValues, fftMag.Length);
@@ -234,7 +192,7 @@ namespace Visualizer
                     peaks[i] -= max[i] / 20;
                     
                     // Decay max over a longer time so that a loud sound doesn't pin the levels too low over time.
-                    max[i] -= max[i] / 2000;
+                    //max[i] -= max[i] / 2000;
 
 
                     double rangeMax = 0;

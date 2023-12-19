@@ -1,11 +1,11 @@
 ﻿{
     "Actions": [
         {
-            "Icon": "Images/zhgold72",
+            "Icon": "Images/action20",
             "Name": "Visualizer",
             "States": [
                 {
-                    "Image": "Images/zhgold72",
+                    "Image": "Images/action20",
                     "TitleAlignment": "bottom",
                     "FontSize": "7"
                 }
@@ -21,9 +21,9 @@
     "Description": "Visualizer",
     "Name": "Visualizer",
     "Category": "Visualizer",
-    "CategoryIcon": "Images/zhgold72",
-    "Icon": "Images/zhgold72",
-    "URL": "https://www.zaphop.com",
+    "CategoryIcon": "Images/categoryIcon",
+    "Icon": "Images/zhgold288",
+    "URL": "https://github.com/BackTrak/StreamDeckVisualizerPlugin",
     "Version": "1.0",
     "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html",
     "OS": [

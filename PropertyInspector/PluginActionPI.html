@@ -171,7 +171,7 @@
         </div>
 
         <div class="sdpi-item" id="gradient_color_select">
-            <div class="sdpi-item-label">Custom Color</div>
+            <div class="sdpi-item-label">Gradient Color</div>
             <select class="sdProperty sdpi-item-value select" id="gradient_color" oninput="setSettings()">
                 <option value="AliceBlue">AliceBlue</option>
                 <option value="AntiqueWhite">AntiqueWhite</option>
@@ -342,17 +342,6 @@
         }
     }
 
-    function pollForControls() {
-        if (websocket == null) {
-            setTimeout(pollForControls, 100);
-        }
-        else {
-            onSelectionChange();
-        }
-    }
-
-    pollForControls();
-
     document.addEventListener('websocketCreate', function () {
         websocket.addEventListener('message', function (event) {
             console.log("Got message event!", event.data);
@@ -370,6 +359,11 @@
                 message.payload.DeviceList.forEach((element) => {
                     $('#visualizer_device').append('<option value="' + element.ID + '">' + element.Name + '</option>');
                 });
+
+                $('#visualizer_device').val(message.payload.SelectedDevice).change();
+
+                // Set dropdown visibility once all the values and selected options have been set.
+                onSelectionChange();
             }
         });
 
