@@ -24,6 +24,12 @@
             </select>
         </div>
 
+        <div class="sdpi-item" id="auto_peak_reset_select">
+            <div class="sdpi-item-label" title="Set this to true if you like the meter to be more full (generally audio outputs), and false for a more realistic output (generally mics).">Auto Peak Reset</div>
+            <input type="checkbox" id="auto_peak_reset" class="sdProperty sdCheckbox" value="true" oninput="setSettings()" />
+            <label for="auto_peak_reset"><span></span>Try ON for audio out, and OFF for mics.</label>
+        </div>
+
         <div class="sdpi-item" id="custom_color_select">
             <div class="sdpi-item-label">Custom Color</div>
             <select class="sdProperty sdpi-item-value select" id="custom_color" oninput="setSettings()">

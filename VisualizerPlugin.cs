@@ -30,6 +30,7 @@ namespace Visualizer
         private KnownColor _customColor = KnownColor.AliceBlue;
         private KnownColor _gradientColor = KnownColor.Coral;
         private string _targetDeviceID = String.Empty;
+        private bool _autoPeakReset = false;
 
         private bool _wasEnabledOnLastTick = false;
 
@@ -58,6 +59,8 @@ namespace Visualizer
 
                 CaptureTargetAudioDevice();
             }
+
+            _autoPeakReset = settings.Value<bool>("auto_peak_reset") == true;
         }
 
         public VisualizerPlugin(SDConnection connection, InitialPayload payload) : base(connection, payload)
@@ -192,7 +195,8 @@ namespace Visualizer
                     peaks[i] -= max[i] / 20;
                     
                     // Decay max over a longer time so that a loud sound doesn't pin the levels too low over time.
-                    //max[i] -= max[i] / 2000;
+                    if(_autoPeakReset == true)
+                        max[i] -= max[i] / 2000;
 
 
                     double rangeMax = 0;

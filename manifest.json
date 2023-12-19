@@ -24,7 +24,7 @@
     "CategoryIcon": "Images/categoryIcon",
     "Icon": "Images/zhgold288",
     "URL": "https://github.com/BackTrak/StreamDeckVisualizerPlugin",
-    "Version": "1.0",
+    "Version": "1.0.0.1",
     "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html",
     "OS": [
         {
