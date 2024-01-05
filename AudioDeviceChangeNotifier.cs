@@ -63,11 +63,11 @@ namespace Visualizer
                 DeviceAdded(deviceId);
         }
 
-        public delegate void DeviceRemovedHandler(string deviceId);
-        /// <summary>
-        /// Raised when an audio device is removed.
-        /// </summary>
-        public event DeviceRemovedHandler DeviceRemoved;
+        //public delegate void DeviceRemovedHandler(string deviceId);
+        ///// <summary>
+        ///// Raised when an audio device is removed.
+        ///// </summary>
+        //public event DeviceRemovedHandler DeviceRemoved;
 
         /// <summary>
         /// Triggered by NAudio.CoreAudioApi.MMDeviceEnumerator when an audio device is removed. 
