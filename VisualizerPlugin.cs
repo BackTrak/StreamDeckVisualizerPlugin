@@ -90,6 +90,13 @@ namespace Visualizer
             SendCurrentAudioDevices(connection);
         }
 
+        public override void Dispose()
+        {
+            Connection.OnSendToPlugin -= Connection_OnSendToPlugin;
+
+            _visualizerActive = false;
+        }
+
         private void Connection_OnSendToPlugin(object sender, SDEventReceivedEventArgs<SendToPlugin> e)
         {
             if(e.Event.Payload.TryGetValue("property_inspector", out var value) == true && value.Value<String>() == "propertyInspectorConnected")
@@ -181,6 +188,9 @@ namespace Visualizer
         {
             try
             {
+                if (_audioValues == null)
+                    return;
+
                 double[] paddedAudio = FftSharp.Pad.ZeroPad(_audioValues);
                 double[] fftMag = FftSharp.Transform.FFTmagnitude(paddedAudio);
                 Array.Copy(fftMag, _fftValues, fftMag.Length);
@@ -407,10 +417,7 @@ namespace Visualizer
         //    Debug.WriteLine("" + d + " |||| " + m + " |||| " + t);
         //}
 
-        public override void Dispose()
-        {
-            _visualizerActive = false;
-        }
+       
 
         public override void KeyPressed(KeyPayload payload)
         {

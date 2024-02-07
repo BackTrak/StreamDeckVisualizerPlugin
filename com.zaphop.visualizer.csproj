@@ -137,7 +137,6 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!!README!!.txt" />
     <Content Include=".gitignore" />
     <Content Include="DistributionTool.exe" />
     <Content Include="Images\action20%402x.png">
