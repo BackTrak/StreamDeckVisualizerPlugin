@@ -41,6 +41,7 @@ namespace Visualizer
         private double[] _fftValues;
 
         private bool _visualizerActive = false;
+        private Process _streamDeckProcess;
 
         private void UpdateSettings(JObject settings)
         {
@@ -69,7 +70,10 @@ namespace Visualizer
 
             _visualizerActive = true;
 
-            
+            _streamDeckProcess = Process.GetProcessesByName("Stream Deck").FirstOrDefault();
+            if(_streamDeckProcess != null)
+                _streamDeckProcess.Exited += _streamDeckProcess_Exited;
+
             Task.Run(() =>
             {
                 using (var audioDeviceChangeNotifier = new AudioDeviceChangeNotifier())
@@ -80,6 +84,8 @@ namespace Visualizer
                     {
                         RenderData();
                         Thread.Sleep(20);
+
+                        
                     }
                 }
             });
@@ -88,6 +94,11 @@ namespace Visualizer
 
             CaptureTargetAudioDevice();
             SendCurrentAudioDevices(connection);
+        }
+
+        private void _streamDeckProcess_Exited(object sender, EventArgs e)
+        {
+            System.Environment.Exit(0);
         }
 
         public override void Dispose()
